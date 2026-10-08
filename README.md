@@ -1,4 +1,4 @@
-# taskly-node
+# Taskly App Node
 
 ## Setup
 
@@ -19,6 +19,8 @@ docker compose down
 ```
 
 ## Frontend
+
+React + TypeScript + Vite. Tests: Vitest + React Testing Library.
 
 Installation:
 
@@ -51,38 +53,84 @@ Coverage — `frontend/coverage/index.html`:
 npm run test:coverage
 ```
 
-## Backend (TypeScript + Node.js + Express)
+## Backend
 
-Requires Node.js >=22.12 and PostgreSQL. From the repository root:
+Node.js + TypeScript + Express. Database: PostgreSQL + Prisma ORM. Tests: Vitest + Supertest.
+
+Requires Node.js >=22.12 and PostgreSQL.
+
+Installation:
 
 ```sh
-cp .env.example .env # if not already configured
 cd backend
 npm ci
 ```
 
-Development (start PostgreSQL from the repository root first):
+Database — run from the repository root:
 
 ```sh
 docker compose up -d --wait postgres
-cd backend
+```
+
+Development — http://localhost:8000/docs (from `backend`):
+
+```sh
 npm run dev
 ```
 
-Production: `npm run build`, then `npm start` from `backend`. API: http://localhost:8000/api/todos.
-Swagger UI: http://localhost:8000/docs. OpenAPI: http://localhost:8000/openapi.json.
-The server reads the root `.env`; `DATABASE_URL` overrides the individual PostgreSQL
-settings. `API_PORT` defaults to 8000. Docker keeps the internal port at 8000.
-The existing `todos` table and data remain compatible; no volume reset is needed.
+Production:
+
+```sh
+npm run build
+npm start
+```
+
+### Database (Prisma ORM)
+
+Schema — `backend/prisma/schema.prisma`. Connection — root `.env`.
+
+Validate schema:
+
+```sh
+npm run db:validate
+```
+
+Generate client — also runs during installation and build:
+
+```sh
+npm run db:generate
+```
+
+Database browser:
+
+```sh
+npm run db:studio
+```
+
+Schema migrations are managed separately; generating the client does not update the database.
 
 ### Tests and coverage
 
-Run from `backend` (no PostgreSQL or `.env` required):
+Type check:
 
 ```sh
-npm run typecheck     # TypeScript validation
-npm run build         # compile to dist/
-npm test              # one run
-npm run test:watch    # watch mode
-npm run test:coverage # generate the coverage report
+npm run typecheck
+```
+
+Tests:
+
+```sh
+npm test
+```
+
+Watch mode:
+
+```sh
+npm run test:watch
+```
+
+Coverage — `backend/coverage/index.html`:
+
+```sh
+npm run test:coverage
 ```

@@ -14,8 +14,8 @@ type Story = StoryObj<typeof AppHeader>
 export const Default: Story = {
   render: (args) => (
     <AppHeader {...args}>
-      <a href="/" aria-label="Taskly — home">
-        Taskly
+      <a href="/" aria-label="Taskly App Node — home">
+        Taskly App Node
       </a>
       <Text muted>Task list</Text>
     </AppHeader>

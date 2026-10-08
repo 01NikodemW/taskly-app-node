@@ -1,8 +1,8 @@
-name: taskly-node
+name: taskly-app-node
 
 services:
   postgres:
-    container_name: taskly-postgres
+    container_name: taskly-app-node-postgres
     image: postgres:17-alpine
     environment:
       POSTGRES_USER: ${POSTGRES_USER:?Copy .env.example to .env}
@@ -11,7 +11,7 @@ services:
     ports:
       - "127.0.0.1:${DB_PORT:?Copy .env.example to .env}:5432"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - taskly-app-node-postgres-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
       interval: 5s
@@ -20,8 +20,8 @@ services:
       start_period: 10s
     restart: unless-stopped
   backend:
-    container_name: taskly-backend
-    image: taskly-backend
+    container_name: taskly-app-node-backend
+    image: taskly-app-node-backend
     build: ./backend
     ports:
       - "127.0.0.1:${API_PORT:?Copy .env.example to .env}:8000"
@@ -42,8 +42,8 @@ services:
       start_period: 10s
     restart: unless-stopped
   frontend:
-    container_name: taskly-frontend
-    image: taskly-frontend
+    container_name: taskly-app-node-frontend
+    image: taskly-app-node-frontend
     build: ./frontend
     ports:
       - "127.0.0.1:${WEB_PORT:?Copy .env.example to .env}:80"
@@ -58,6 +58,6 @@ services:
     restart: unless-stopped
 
 volumes:
-  postgres-data:
+  taskly-app-node-postgres-data:
     # Keep the existing database when renaming the Compose project.
     name: taskly-app-main_postgres-data

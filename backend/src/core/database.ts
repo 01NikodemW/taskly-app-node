@@ -1,17 +1,15 @@
-import pg from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '../generated/prisma/client.js';
 import type { Database } from '../features/todos/types.js';
 
-export function createDatabase(connectionString: string): pg.Pool {
-  // Keep SQL DATE as a calendar date, independent of the server timezone.
-  const types: pg.CustomTypesConfig = {
-    getTypeParser: (oid, format) => oid === 1082 ? (value: string) => value : pg.types.getTypeParser(oid, format),
-  };
-  return new pg.Pool({ connectionString, types, connectionTimeoutMillis: 10000 });
+export function createDatabase(connectionString: string): PrismaClient {
+  const adapter = new PrismaPg({ connectionString, connectionTimeoutMillis: 10000 });
+  return new PrismaClient({ adapter });
 }
 
 export async function initialize(database: Database): Promise<void> {
   // Compatible with the existing SQLAlchemy table and sequence.
-  await database.query(`CREATE TABLE IF NOT EXISTS todos (
+  await database.$executeRaw`CREATE TABLE IF NOT EXISTS todos (
     id SERIAL PRIMARY KEY,
     title VARCHAR(120) NOT NULL CONSTRAINT todo_title_not_empty CHECK (length(title) >= 1),
     description VARCHAR(2000) NOT NULL DEFAULT '',
@@ -20,5 +18,5 @@ export async function initialize(database: Database): Promise<void> {
     completed BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL
-  )`);
+  )`;
 }
